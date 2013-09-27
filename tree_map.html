@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+}
+
+form {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.node {
+  border: solid 1px white;
+  font: 10px sans-serif;
+  line-height: 12px;
+  overflow: hidden;
+  position: absolute;
+  text-indent: 2px;
+}
+
+</style>
+<form>
+  <label><input type="radio" name="mode" value="size" checked> Size</label>
+  <label><input type="radio" name="mode" value="count"> Count</label>
+</form>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="http://localhost:3001/1/delinquency/investors/tree_maps/upb.json"></script>
+<script>
+
+  var flarejson = {"name":"flare","children":[{"name":"AG","children":[{"name":"30 Day UPB","size":"32530523.54"},{"name":"60 Day UPB","size":"18044270.07"},{"name":"90 Day UPB","size":"11100388.29"},{"name":"120 Day UPB","size":"61044045.86"},{"name":"Performing UPB(AG)","size":"870432717.56"}]},{"name":"FHA","children":[{"name":"30 Day UPB","size":"66878172.59"},{"name":"60 Day UPB","size":"24821365.52"},{"name":"90 Day UPB","size":"16343362.96"},{"name":"120 Day UPB","size":"34706333.43"},{"name":"Performing UPB(FHA)","size":"16969192075.56"}]},{"name":"FHLMC","children":[{"name":"30 Day UPB","size":"415624.0"},{"name":"60 Day UPB","size":"336124.96"},{"name":"90 Day UPB","size":"0.0"},{"name":"120 Day UPB","size":"167716.09"},{"name":"Performing UPB(FHLMC)","size":"5022122187.75"}]},{"name":"FNMA","children":[{"name":"30 Day UPB","size":"14954443.46"},{"name":"60 Day UPB","size":"4899394.77"},{"name":"90 Day UPB","size":"2885127.06"},{"name":"120 Day UPB","size":"13218257.72"},{"name":"Performing UPB(FNMA)","size":"20391209753.37"}]},{"name":"PNMAC","children":[{"name":"30 Day UPB","size":"108822825.25"},{"name":"60 Day UPB","size":"66957809.52"},{"name":"90 Day UPB","size":"41163373.85"},{"name":"120 Day UPB","size":"976812991.04"},{"name":"Performing UPB(PNMAC)","size":"2207762136.1"}]},{"name":"VA","children":[{"name":"30 Day UPB","size":"2398124.96"},{"name":"60 Day UPB","size":"707752.78"},{"name":"90 Day UPB","size":"323456.78"},{"name":"120 Day UPB","size":"197854.42"},{"name":"Performing UPB(VA)","size":"2897542397.05"}]}]};
+
+var margin = {top: 40, right: 10, bottom: 10, left: 10},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var color = d3.scale.category20c();
+
+var treemap = d3.layout.treemap()
+    .size([width, height])
+    .sticky(true)
+    .value(function(d) { return d.size; });
+
+var div = d3.select("body").append("div")
+    .style("position", "relative")
+    .style("width", (width + margin.left + margin.right) + "px")
+    .style("height", (height + margin.top + margin.bottom) + "px")
+    .style("left", margin.left + "px")
+    .style("top", margin.top + "px");
+
+function loadTreeMap(root) {
+  var node = div.datum(root).selectAll(".node")
+      .data(treemap.nodes)
+    .enter().append("div")
+      .attr("class", "node")
+      .call(position)
+      .style("background", function(d) { return d.children ? color(d.name) : null; })
+      .text(function(d) { return d.children ? null : d.name; });
+
+  d3.selectAll("input").on("change", function change() {
+    var value = this.value === "count"
+        ? function() { return 1; }
+        : function(d) { return d.size; };
+
+    node
+        .data(treemap.value(value).nodes)
+      .transition()
+        .duration(1500)
+        .call(position);
+  });
+};
+
+function position() {
+  this.style("left", function(d) { return d.x + "px"; })
+      .style("top", function(d) { return d.y + "px"; })
+      .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
+      .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
+}
+
+loadTreeMap(flarejson);
+</script>

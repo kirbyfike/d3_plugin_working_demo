@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+circle {
+  fill: rgb(31, 119, 180);
+  fill-opacity: .25;
+  stroke: rgb(31, 119, 180);
+  stroke-width: 1px;
+}
+
+.leaf circle {
+  fill: #ff7f0e;
+  fill-opacity: 1;
+}
+
+text {
+  font: 10px sans-serif;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+var flarejson = {"name":"flare","children":[{"name":"AG","children":[{"name":"30 Day UPB","size":"32530523.54"},{"name":"60 Day UPB","size":"18044270.07"},{"name":"90 Day UPB","size":"11100388.29"},{"name":"120 Day UPB","size":"61044045.86"},{"name":"Performing UPB(AG)","size":"870432717.56"}]},{"name":"FHA","children":[{"name":"30 Day UPB","size":"66878172.59"},{"name":"60 Day UPB","size":"24821365.52"},{"name":"90 Day UPB","size":"16343362.96"},{"name":"120 Day UPB","size":"34706333.43"},{"name":"Performing UPB(FHA)","size":"16969192075.56"}]},{"name":"FHLMC","children":[{"name":"30 Day UPB","size":"415624.0"},{"name":"60 Day UPB","size":"336124.96"},{"name":"90 Day UPB","size":"0.0"},{"name":"120 Day UPB","size":"167716.09"},{"name":"Performing UPB(FHLMC)","size":"5022122187.75"}]},{"name":"FNMA","children":[{"name":"30 Day UPB","size":"14954443.46"},{"name":"60 Day UPB","size":"4899394.77"},{"name":"90 Day UPB","size":"2885127.06"},{"name":"120 Day UPB","size":"13218257.72"},{"name":"Performing UPB(FNMA)","size":"20391209753.37"}]},{"name":"PNMAC","children":[{"name":"30 Day UPB","size":"108822825.25"},{"name":"60 Day UPB","size":"66957809.52"},{"name":"90 Day UPB","size":"41163373.85"},{"name":"120 Day UPB","size":"976812991.04"},{"name":"Performing UPB(PNMAC)","size":"2207762136.1"}]},{"name":"VA","children":[{"name":"30 Day UPB","size":"2398124.96"},{"name":"60 Day UPB","size":"707752.78"},{"name":"90 Day UPB","size":"323456.78"},{"name":"120 Day UPB","size":"197854.42"},{"name":"Performing UPB(VA)","size":"2897542397.05"}]}]};
+
+var diameter = 960,
+    format = d3.format(",d");
+
+var pack = d3.layout.pack()
+    .size([diameter - 4, diameter - 4])
+    .value(function(d) { return d.size; });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", diameter)
+    .attr("height", diameter)
+  .append("g")
+    .attr("transform", "translate(2,2)");
+
+function drawCirclePacking(root) {
+
+  var node = svg.datum(root).selectAll(".node")
+      .data(pack.nodes)
+    .enter().append("g")
+      .attr("class", function(d) { return d.children ? "node" : "leaf node"; })
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+  node.append("title")
+      .text(function(d) { return d.name + (d.children ? "" : ": " + format(d.size)); });
+
+  node.append("circle")
+      .attr("r", function(d) { return d.r; });
+
+  node.filter(function(d) { return !d.children; }).append("text")
+      .attr("dy", ".3em")
+      .style("text-anchor", "middle")
+      .text(function(d) { return d.name.substring(0, d.r / 3); });
+}
+
+d3.select(self.frameElement).style("height", diameter + "px");
+drawCirclePacking(flarejson);
+</script>

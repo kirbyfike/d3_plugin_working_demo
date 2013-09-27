@@ -1,0 +1,18 @@
+.q0 { fill: #F5B7B1 }
+.q1 { fill: #F1948A }
+.q2 { fill: #EC7063 }
+.q3 { fill: #E74c3c }
+.q4 { fill: #DDDDDD }
+
+.tooltip {
+  color: #222;
+  background: #fff;
+  padding: .5em;
+  text-shadow: #f5f5f5 0 1px 0;
+  border-radius: 2px;
+  box-shadow: 0px 0px 2px 0px #a6a6a6;
+  opacity: 0.9;
+  position: absolute;
+  display: none;
+  border: 1px solid black;
+}
