@@ -10,7 +10,7 @@ $(document).ready(function(){
         delinquent_30_days_rate: "Delinquent Rate"
       }
     }
-
+    /* Possibly not working due to referencing to localhost */
     $("#map1").USMap(options);
     $("#map2").USMap({topojsonUrl: "http://localhost:3001/1/delinquency/demo/maps/us.json?callback=topo_json_callback", quantitativeID: "delinquent_60_days_rate"});
     $("#map3").USMap({topojsonUrl: "http://localhost:3001/1/delinquency/demo/maps/us.json?callback=topo_json_callback", quantitativeID: "performing_loan_count"});
